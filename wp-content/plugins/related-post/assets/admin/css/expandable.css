@@ -1,0 +1,57 @@
+/*
+Admin css
+*/
+
+.expandable{}
+.expandable .items{}
+.expandable .items {
+	background: none repeat scroll 0 0 rgb(255, 255, 255);
+	border-bottom: 1px solid rgb(153, 153, 153);
+	margin: 2px 0;
+}
+.expandable  .header {
+	background: #a7e1ff none repeat scroll 0 0;
+	padding: 10px;
+}
+
+.expandable .header .remove {
+	background: rgb(255, 73, 10) none repeat scroll 0 0;
+	color: rgb(255, 255, 255);
+	cursor: pointer;
+	margin-right: 10px;
+	padding: 1px 6px;
+}
+
+.expandable .header .move {
+	padding: 10px;
+	cursor: move;
+}
+
+.expandable .header .expand-collapse{padding: 10px;cursor: pointer;}
+.expandable .header .expand-collapse .fa-expand{ display:inline-block;}
+.expandable .header .expand-collapse .fa-compress{ display:none;}
+.expandable .header .items.active .expand-collapse .fa-expand{ display:none;}
+.expandable .header .items.active .expand-collapse .fa-collapse{ display:inline-block;}
+
+
+
+
+.expandable .active .options {
+  
+	display: block;
+
+}
+.expandable .options {
+	background: none repeat scroll 0 0 rgb(240, 240, 240);
+	display: none;
+	padding: 10px;
+}
+
+
+
+
+
+
+
+
+

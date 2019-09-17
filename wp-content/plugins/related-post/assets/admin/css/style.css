@@ -1,0 +1,78 @@
+@charset "utf-8";
+/* CSS Document */
+
+
+
+.related-post-meta{}
+
+.related-post-meta .suggest-post-list {
+	margin-top: 20px;
+}
+.related-post-meta .suggest-post-list .item {
+	padding: 3px 10px;
+	border-bottom: 1px solid #ddd;
+	cursor: pointer;
+}
+
+
+
+
+
+
+.related-post-admin{}
+
+
+.related-post-admin .layouts {
+
+}
+.related-post-admin .layouts .items{}
+.related-post-admin .layouts .items .header{}
+.related-post-admin .layouts .items .header label {
+  float: right;
+}
+.related-post-admin .layouts .items .options{}
+
+.related-post-admin .layouts .items .header {
+	background: #a7e1ff none repeat scroll 0 0;
+	padding: 10px;
+}
+
+.related-post-admin .layouts .items .header .move {
+	cursor: move;
+	padding: 10px;
+}
+
+.related-post-admin .layouts .items .header .expand-compress {
+	cursor: pointer;
+	padding: 10px;
+}
+
+
+.related-post-admin .layouts .items .header .expand-compress .fa-expand{ display:inline-block;}
+.related-post-admin .layouts .items .header .expand-compress .fa-compress{ display:none;}
+
+.related-post-admin .layouts .items .header.active .expand-compress .fa-expand{ display:none;}
+.related-post-admin .layouts .items .header.active .expand-compress .fa-compress{ display:inline-block;}
+
+
+
+.related-post-admin .faq{}
+.related-post-admin .faq .group-title {
+  display: block;
+  font-weight: bold;
+  padding: 10px 0;
+}
+
+
+.related-post-admin .faq .item {
+  padding-left: 20px;
+}
+.related-post-admin .faq .item a {
+  display: block;
+  font-size: 14px;
+  padding: 4px 0;
+  text-decoration: none;
+}
+
+
+

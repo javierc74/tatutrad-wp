@@ -1,0 +1,84 @@
+// Use this file to overwrite the basic Bootstrap variables and add your own variables
+// To overwrite a Bootstrap variable you don´t have to touch the Bootstrap folder. 
+// Just copy a variable from /sass/bootstrap/_variables.scss, paste it here and edit the value.
+// As example you find one of the most important Bootstrap variable below: $brand-primary.
+// Thats the ugly Bootstrap blue used for all the links, primary buttons etc.
+// Just add your color code here, compile the theme.scss file to change this color everywhere
+
+
+//
+// Color system
+//
+
+
+
+$verde:#139129;
+$primary: $verde;
+$azul: #0076C1;
+$grisOscuro:#333333;
+$grisMedio:#707070;
+$grisClaro:#f7f7f7;
+$blanco:#ffffff;
+
+$body-color:                #333 !default;
+$font-family-sans-serif:      Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji" !default;
+$font-family-slab:      'Roboto Slab', serif;
+$headings-font-family: $font-family-slab;
+
+
+// Spacing
+//
+// Control the default styling of most Bootstrap elements by modifying these
+// variables. Mostly focused on spacing.
+// You can add more entries to the $spacers map, should you need more variation.
+
+$spacer: 1rem !default;
+$spacers: () !default;
+// stylelint-disable-next-line scss/dollar-variable-default
+$spacers: map-merge(
+  (
+    0: 0,
+    1: ($spacer * .25),
+    2: ($spacer * .5),
+    3: $spacer,
+    4: ($spacer * 1.5),
+    5: ($spacer * 3),
+    6: ($spacer * 4.5),
+    7: ($spacer * 6),
+    8: ($spacer * 7.5),
+    9: ($spacer * 9),
+    10: ($spacer * 10),
+    11: ($spacer * 11),
+    12: ($spacer * 12),
+    13: ($spacer * 13),
+    14: ($spacer * 14),
+    15: ($spacer * 15)
+  ),
+  $spacers
+);
+
+// Modals
+
+// Padding applied to the modal body
+
+$modal-inner-padding:               0 !default;
+$modal-content-bg:                  transparent !default;
+
+
+$modal-content-border-width:        0 !default;
+
+$modal-content-box-shadow-xs:       white !default;
+$modal-content-box-shadow-sm-up:    white !default;
+
+
+$modal-header-border-color:         transparent !default;
+$modal-footer-border-color:         transparent !default;
+$modal-header-border-width:         0 !default;
+$modal-footer-border-width:         0 !default;
+
+$modal-xl:                          1140px !default;
+$modal-lg:                          800px !default;
+$modal-md:                          500px !default;
+$modal-sm:                          300px !default;
+
+
