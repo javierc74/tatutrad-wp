@@ -15565,7 +15565,8 @@ body.home #menu-social-idiomas > #menu-social-menu-es > li a {
 #wrapper-footer .inc::after {
   display: none; }
 
-#wrapper-footer-full, #wrapper-static-hero {
+#wrapper-footer-full,
+#wrapper-static-hero {
   background-color: transparent; }
 
 #footer-full-content {
@@ -15646,7 +15647,7 @@ body.home #menu-social-idiomas > #menu-social-menu-es > li a {
 
 /*PAginas tatutrad*/
 .page-template-pagina-tatutrad {
-   /*
+  /*
 
    
    .inc:after,
@@ -15770,6 +15771,76 @@ body.home #menu-social-idiomas > #menu-social-menu-es > li a {
       border-bottom: 2px solid #fff;
       transition: all 0.35s ease-in-out; }
 
+.intSectores .item {
+  padding: 0 5px;
+  width: 100%; }
+  @media (min-width: 576px) {
+    .intSectores .item {
+      width: 50%; } }
+  @media (min-width: 768px) {
+    .intSectores .item {
+      width: 33%; } }
+  @media (min-width: 992px) {
+    .intSectores .item {
+      width: 25%; } }
+  @media (min-width: 1200px) {
+    .intSectores .item {
+      width: 20%; } }
+  .intSectores .item a {
+    background-color: rgba(19, 145, 41, 0);
+    display: block;
+    padding: 5px;
+    min-height: 110px;
+    position: relative;
+    margin-bottom: 20px;
+    padding-bottom: 3px;
+    transition: all 0.35s ease-in-out; }
+    .intSectores .item a h3 {
+      font-size: 0.95rem;
+      margin-top: 5px;
+      position: absolute;
+      bottom: 8px;
+      transition: all 0.35s ease-in-out; }
+    .intSectores .item a img {
+      width: 50px;
+      height: auto;
+      transition: all 0.35s ease-in-out; }
+    .intSectores .item a span {
+      display: block;
+      opacity: 0;
+      font-size: 0.7rem;
+      font-family: Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+      text-transform: uppercase;
+      margin-top: 4px;
+      position: absolute;
+      bottom: 3px;
+      left: 5px;
+      transition: all 0.35s ease-in-out; }
+    .intSectores .item a:hover {
+      background-color: rgba(19, 145, 41, 0.1);
+      text-decoration: none;
+      transition: all 0.35s ease-in-out; }
+      .intSectores .item a:hover h3 {
+        bottom: 18px;
+        transition: all 0.35s ease-in-out; }
+      .intSectores .item a:hover img {
+        width: 40px;
+        transition: all 0.35s ease-in-out; }
+      .intSectores .item a:hover span {
+        bottom: 6px;
+        opacity: 1;
+        transition: all 0.35s ease-in-out; }
+      .intSectores .item a:hover:after {
+        bottom: 3px; }
+    .intSectores .item a:after {
+      content: "";
+      display: block;
+      position: absolute;
+      bottom: 0;
+      width: 30%;
+      border-bottom: 2px solid #fff;
+      transition: all 0.35s ease-in-out; }
+
 /*Servicios*/
 .homeServicios .col h3 {
   font-size: 1.1rem; }
@@ -15790,6 +15861,32 @@ body.home #menu-social-idiomas > #menu-social-menu-es > li a {
     opacity: 1;
     text-decoration: none; }
   .homeServicios .col a:after {
+    content: "";
+    display: block;
+    position: absolute;
+    top: 0;
+    width: 20%;
+    border-bottom: 2px solid #fff; }
+
+.intServicios .col h3 {
+  font-size: 1.1rem; }
+.intServicios .col p {
+  font-size: .85rem;
+  margin-bottom: 5px; }
+.intServicios .col a {
+  color: #139129;
+  font-size: .75rem;
+  text-transform: uppercase;
+  opacity: .65;
+  font-weight: 900;
+  display: block;
+  position: relative;
+  padding-top: 5px;
+  margin-top: 7px; }
+  .intServicios .col a:hover {
+    opacity: 1;
+    text-decoration: none; }
+  .intServicios .col a:after {
     content: "";
     display: block;
     position: absolute;
