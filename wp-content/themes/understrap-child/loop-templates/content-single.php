@@ -12,7 +12,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 <article <?php post_class(); ?> id="post-<?php the_ID(); ?>">
 
-<?php echo get_the_post_thumbnail( $post->ID ); ?>
+<?php 
+	
+	if ( has_post_thumbnail() ) {
+		echo get_the_post_thumbnail( $post->ID ); 
+	}
+	else {
+		echo '<img src="https://via.placeholder.com/800x400.png?text=No image"  class="mb-3"/>';
+	}
+	?>
+	
 
 
 

@@ -11,8 +11,20 @@ if ( ! defined( 'ABSPATH' ) ) {
 ?>
 <div class="col-sm-6">
 	<article <?php post_class('card mb-4'); ?> id="post-<?php the_ID(); ?>">
+
 		
-	<?php echo get_the_post_thumbnail( $post->ID ); ?>
+	<?php 
+	
+	if ( has_post_thumbnail() ) {
+		echo get_the_post_thumbnail( $post->ID ); 
+	}
+	else {
+		echo '<img src="https://via.placeholder.com/800x400.png?text=No image" />';
+	}
+	?>
+	
+	
+	
 
 		<header class="entry-header">
 			<?php

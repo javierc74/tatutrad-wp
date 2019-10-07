@@ -16068,6 +16068,8 @@ body.home #menu-social-idiomas > #menu-social-menu-es > li a {
 .blog .entry-meta,
 .blog .entry-footer {
   font-size: .85rem; }
+.blog .wpp-list li {
+  margin-bottom: 10px; }
 
 /* Single Blog */
 .single #wrapper-navbar nav.bg-primary {
