@@ -36,7 +36,7 @@ $container = get_theme_mod( 'understrap_container_type' );
 	</div><!-- wrapper end -->
 </div>
 </div><!-- #page we need this extra closing tag here -->
-<a id="sol-presup" class="btn btn-tatu btn-primary" href="<?php echo get_permalink(apply_filters( 'wpml_object_id', 2101, 'post', TRUE, $lang )); ?>" ><?php _e('Solicita tu presupuesto','theme-textdomain');?></a>
+<a id="sol-presup" class="btn btn-tatu btn-primary" href="<?php echo get_permalink(apply_filters( 'wpml_object_id', 2101, 'post', TRUE, $lang )); ?>" ><?php _e('Request a quote','theme-textdomain');?></a>
 
 
 <?php wp_footer(); ?>
