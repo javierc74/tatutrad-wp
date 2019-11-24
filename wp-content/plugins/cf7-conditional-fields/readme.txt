@@ -5,8 +5,8 @@ Author: Jules Colle
 Website: http://bdwm.be
 Tags: wordpress, contact form 7, forms, conditional fields
 Requires at least: 4.1
-Tested up to: 5.2.2
-Stable tag: 1.6.4
+Tested up to: 5.3
+Stable tag: 1.7.6
 Requires PHP: 5.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -101,6 +101,43 @@ The conditional fields javascript code is loaded during wp_footer, so a call to 
 2. Defining rules to show/hide groups of input elements in the backend interface
 
 == Changelog ==
+
+= 1.7.6 (11-01-19) =
+* Fixed small compatibility problem with CF7 Smart Grid (https://wordpress.org/support/topic/problem-on-save-form-when-the-active-tabs-are-not-conditional-form/#post-12085173)
+* Fixed some more porblems with parsing conditions (regex changes)
+* Got rid of screen_icon notice on CF settings page
+
+= 1.7.5 (10-31-19) =
+* Fixed bug in admin where settings got cleared if using some operators (mostly PRO operators)
+
+= 1.7.4 (10-29-19) =
+* PRO: made repeater (80%) compatible with material-design-for-contact-form-7
+* PRO: made exclusive checkbox work with repeater fields
+* PRO: trigger events when a repeater adds fields: 'wpcf7cf_repeater_added' - and when a repeater removes fields: 'wpcf7cf_repeater_removed'. Can be called with `$('form').on('wpcf7cf_repeater_removed', function() { /*...*/ })`
+* PRO: fixed bug with mutistep (formn did not work correctly if there were multiple forms on one page).
+
+= 1.7.3 (10-24-19) =
+* removed @babel/polyfill. All seems to be working fine without it in IE11. JS file is now back to 25kb instead of 100kb.
+
+= 1.7.2 (10-24-19) =
+* Bug fix: new javascript files where throwing errors. Should be okay now. (Also included JS source map for easier debugging)
+
+= 1.7.1 (10-23-19) =
+* PRO: Added basic support for multistep. No options available yet. You can insert [step] tags inside your code. More info at https://conditional-fields-cf7.bdwm.be/multistep/
+* Set up an NPM dev environment with babel and webpack. This means all the client side JS code will look super ugly, and it's also more bytes. But the plus side is that the plugin should also work fine in older browsers now.
+* Tested with WP version 5.3
+
+= 1.7 (10-18-19) =
+* code rewrite. Made code more testable by focusing more on a functional approach. Not completely finished yet, but getting there.
+* FIXED clear_on_hide not working for multi select https://github.com/pwkip/contact-form-7-conditional-fields/issues/35
+* PRO: FIXED https://github.com/pwkip/contact-form-7-conditional-fields/issues/34 - A real nest fest is now possible. You can put groups inside repeaters inside repeaters inside groups ...
+* FIXED make clear_on_hide restore initial values instead of clearing https://github.com/pwkip/contact-form-7-conditional-fields/issues/31
+* WP-admin: Renamed "Import/Export" to "Text view". Conditions specified in the input fields are now semi-automatically synced with the text view.
+* Internal change: When saving conditions, instead of posting all the input fields, the input fields are added to the "text view" textarea, and only the textarea will be sent. This is to prevent issues with PHP max_input_vars
+
+= 1.6.5 (10-15-19) =
+* Patched a minor security issue. From now on, only users with the 'wpcf7_edit_contact_form' capability will be able to reset the Conditional Fields settings to their defaults. Big thanks to Chloe from Wordfence for pointing this out!
+* Tested the plugin with WP version 5.2.4
 
 = 1.6.4 (07-04-19) =
 * PRO: Repeater: Fixed invalid HTML for the remove button

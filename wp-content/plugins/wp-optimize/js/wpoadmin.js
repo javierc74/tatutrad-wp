@@ -141,7 +141,7 @@ var WP_Optimize = function (send_command) {
 				// external filter (column specific or any match)
 				filter_external: table_list_filter,
 				// add a default type search to the second table column
-				filter_defaultFilter: { 2 : '~{query}' },
+				filter_defaultFilter: { 2 : '~{query}' }
 			}
 		});
 
@@ -510,7 +510,7 @@ var WP_Optimize = function (send_command) {
 		} else if (additional_data_length > 0) {
 			// check if additional data passed for optimization.
 			data = {
-				optimization_id: id,
+				optimization_id: id
 			};
 
 			for (var i in additional_data) {

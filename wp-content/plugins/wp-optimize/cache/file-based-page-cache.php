@@ -23,7 +23,7 @@ if (strpos($_SERVER['REQUEST_URI'], 'robots.txt') !== false || strpos($_SERVER['
 
 // Don't cache non-GET requests.
 if (!isset($_SERVER['REQUEST_METHOD']) || 'GET' !== $_SERVER['REQUEST_METHOD']) {
-	$no_cache_because[] = 'The request method was not GET ('.$_SERVER['REQUEST_METHOD'].')';
+	$no_cache_because[] = 'The request method was not GET ('.(isset($_SERVER['REQUEST_METHOD']) ? $_SERVER['REQUEST_METHOD'] : '-').')';
 }
 
 $file_extension = $_SERVER['REQUEST_URI'];
@@ -102,7 +102,7 @@ if (!empty($_GET)) {
 
 if (!empty($no_cache_because)) {
 	// Only output if the user has turned on debugging output
-	if (defined('WP_DEBUG') && WP_DEBUG) {
+	if (defined('WP_DEBUG') && WP_DEBUG && (!defined('DOING_CRON') || !DOING_CRON)) {
 		wpo_cache_add_footer_output("\n<!-- WP Optimize page cache - https://getwpo.com - page not served from cache because: ".implode(', ', array_filter($no_cache_because, 'htmlspecialchars'))." -->\n");
 	}
 	return;

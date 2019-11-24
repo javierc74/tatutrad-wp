@@ -33,7 +33,7 @@ class class_related_post_notices{
 					$admin_url = get_admin_url();
 					
 					$html.= '<div class="update-nag">';
-					$html.= sprintf(__('We have update lots more things, Please review settings <a href="%sadmin.php?page=related_post_settings">Related Post</a>', related_post_textdomain), $admin_url);
+					$html.= sprintf(__('We have update lots more things, Please review settings <a href="%sadmin.php?page=related_post_settings">Related Post</a>', 'related-post'), $admin_url);
 					$html.= '</div>';	
 				}
 

@@ -38,6 +38,8 @@ class Updraft_Smush_Manager_Commands extends Updraft_Task_Manager_Commands_1_0 {
 			'clear_smush_stats',
 			'check_server_status',
 			'get_smush_logs',
+			'mark_as_compressed',
+			'clean_all_backup_images',
 		);
 
 		return array_merge($commands, $smush_commands);
@@ -187,6 +189,8 @@ class Updraft_Smush_Manager_Commands extends Updraft_Task_Manager_Commands_1_0 {
 		$options['compression_server'] = filter_var($data['compression_server'], FILTER_SANITIZE_STRING);
 		$options['lossy_compression'] = filter_var($data['lossy_compression'], FILTER_VALIDATE_BOOLEAN) ? true : false;
 		$options['back_up_original'] = filter_var($data['back_up_original'], FILTER_VALIDATE_BOOLEAN) ? true : false;
+		$options['back_up_delete_after'] = filter_var($data['back_up_delete_after'], FILTER_VALIDATE_BOOLEAN) ? true : false;
+		$options['back_up_delete_after_days'] = filter_var($data['back_up_delete_after_days'], FILTER_SANITIZE_NUMBER_INT);
 		$options['preserve_exif'] = filter_var($data['preserve_exif'], FILTER_VALIDATE_BOOLEAN) ? true : false;
 		$options['autosmush'] = filter_var($data['autosmush'], FILTER_VALIDATE_BOOLEAN) ? true : false;
 		$options['image_quality'] = filter_var($data['image_quality'], FILTER_SANITIZE_NUMBER_INT);
@@ -268,6 +272,57 @@ class Updraft_Smush_Manager_Commands extends Updraft_Task_Manager_Commands_1_0 {
 	}
 
 	/**
+	 * Mark selected images as already compressed.
+	 *
+	 * @param array $data
+	 * @return array
+	 */
+	public function mark_as_compressed($data) {
+		$response = array();
+		$selected_images = array();
+
+		$unmark = isset($data['unmark']) && $data['unmark'];
+
+		foreach ($data['selected_images'] as $image) {
+			if (!array_key_exists($image['blog_id'], $selected_images)) $selected_images[$image['blog_id']] = array();
+
+			$selected_images[$image['blog_id']][] = $image['attachment_id'];
+		}
+
+		$info = __('This image is marked as already compressed by another tool.', 'wp-optimize');
+
+		foreach (array_keys($selected_images) as $blog_id) {
+			if (is_multisite()) switch_to_blog($blog_id);
+
+			foreach ($selected_images[$blog_id] as $attachment_id) {
+				if ($unmark) {
+					delete_post_meta($attachment_id, 'smush-complete');
+					delete_post_meta($attachment_id, 'smush-marked');
+					delete_post_meta($attachment_id, 'smush-info');
+				} else {
+					update_post_meta($attachment_id, 'smush-complete', true);
+					update_post_meta($attachment_id, 'smush-marked', true);
+					update_post_meta($attachment_id, 'smush-info', $info);
+				}
+			}
+
+			if (is_multisite()) restore_current_blog();
+		}
+
+		$response['status'] = true;
+
+		if ($unmark) {
+			$response['summary'] = _n('Selected image marked as uncompressed successfully', 'Selected images marked as uncompressed successfully', count($data['selected_images']), 'wp-optimize');
+		} else {
+			$response['summary'] = _n('Selected image marked as compressed successfully', 'Selected images marked as compressed successfully', count($data['selected_images']), 'wp-optimize');
+		}
+
+		$response['info'] = $info;
+
+		return $response;
+	}
+
+	/**
 	 * Returns the log file
 	 *
 	 * @return WP_Error|file - logfile or WP_Error object on failure
@@ -288,7 +343,6 @@ class Updraft_Smush_Manager_Commands extends Updraft_Task_Manager_Commands_1_0 {
 			header('Cache-Control: must-revalidate');
 			header('Pragma: public');
 			header('Content-Length: ' . filesize($logfile));
-			//@codingStandardsIgnoreLine
 			readfile($logfile);
 			exit;
 		} else {
@@ -296,6 +350,22 @@ class Updraft_Smush_Manager_Commands extends Updraft_Task_Manager_Commands_1_0 {
 		}
 		
 		return $response;
+	}
+
+	/**
+	 * Clean all backup images command.
+	 *
+	 * @return array
+	 */
+	public function clean_all_backup_images() {
+		$upload_dir = wp_get_upload_dir();
+		$base_dir = $upload_dir['basedir'];
+
+		$this->task_manager->clear_backup_images_directory($base_dir, 0);
+
+		return array(
+			'status' => true,
+		);
 	}
 
 	/**

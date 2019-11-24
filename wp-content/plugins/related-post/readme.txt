@@ -3,8 +3,8 @@
 	Donate link: http://pickplugins.com
 	Tags: related post, related posts, related content, related post list, related, similar posts
 	Requires at least: 3.8
-	Tested up to: 5.2
-	Stable tag: 2.0.4
+	Tested up to: 5.3
+	Stable tag: 2.0.6
 	License: GPLv2 or later
 	License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -16,7 +16,6 @@ Related Post allows you to display related post under post or other post type vi
 
 ### Related Post by http://pickplugins.com
 
-* [Related Post - Premium! &raquo;](https://www.pickplugins.com/product/related-post/ref=wordpress.org)
 * [Documentation! &raquo;](https://pickplugins.com/documentation/related-post/ref=wordpress.org)
 
 
@@ -63,6 +62,13 @@ echo do_shortcode( '[related_post]' );
 
 == Changelog ==
 
+
+	= 2.0.6 =
+    * 23/10/2018 add - added orderby post__in option
+
+
+	= 2.0.5 =
+    * 21/10/2018 add - added order and orderby option
 
 
 	= 2.0.4 =

@@ -6,14 +6,14 @@ if ( ! defined('ABSPATH')) exit; // if direct access
 
 
 <div class="wrap">
-	<?php echo "<h2>".sprintf(__('%s Help', related_post_textdomain), related_post_plugin_name )."</h2>";?>
+	<?php echo "<h2>".sprintf(__('%s Help', 'related-post'), related_post_plugin_name )."</h2>";?>
     <br />
 
 	<div class="para-settings related-post-admin">  
         
         
         <ul class="tab-nav"> 
-            <li nav="1" class="nav1 active"><i class="fa fa-hand-o-right"></i> <?php _e('Help & Support',related_post_textdomain); ?></li>
+            <li nav="1" class="nav1 active"><i class="fa fa-hand-o-right"></i> <?php _e('Help & Support','related-post'); ?></li>
             
         </ul> <!-- tab-nav end --> 
         
@@ -22,7 +22,7 @@ if ( ! defined('ABSPATH')) exit; // if direct access
             <li style="display: block;" class="box1 tab-box active">
             
                 <div class="option-box">
-                    <p class="option-title"><?php _e('Looking for help', related_post_textdomain); ?></p>
+                    <p class="option-title"><?php _e('Looking for help', 'related-post'); ?></p>
                     <p class="option-info"></p>
 					<p>Feel free to contact with any issue for this plugin, Ask any question via forum <a href="<?php echo related_post_qa_url; ?>"><?php echo related_post_qa_url; ?></a> <strong style="color:#139b50;">(free)</strong>
 </p>
@@ -32,7 +32,7 @@ if ( ! defined('ABSPATH')) exit; // if direct access
             
             
                 <div class="option-box">
-                    <p class="option-title"><?php _e('FAQ', related_post_textdomain); ?></p>
+                    <p class="option-title"><?php _e('FAQ', 'related-post'); ?></p>
                     <p class="option-info"></p>
                     
                     

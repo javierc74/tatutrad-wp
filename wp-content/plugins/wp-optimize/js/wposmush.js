@@ -14,16 +14,17 @@ var WP_Optimize_Smush = function() {
 		smush_images_optimization_message = $('#smush_info_images'),
 		smush_images_pending_tasks_container = $('#wpo_smush_images_pending_tasks_container'),
 		smush_images_pending_tasks_btn = $('#wpo_smush_images_pending_tasks_button'),
-		smush_images_pending_tasks_cancel_btn = $('#wpo_smush_images_pending_tasks_cancel_button'),
 		smush_images_save_options_btn = $('.wpo-fieldgroup #wpo_smush_images_save_options_button'),
 		smush_images_refresh_btn = $('#wpo_smush_images_refresh'),
 		smush_images_select_all_btn = $('#wpo_smush_images_select_all'),
 		smush_images_select_none_btn = $('#wpo_smush_images_select_none'),
 		smush_images_stats_clear_btn = $('#wpo_smush_clear_stats_btn'),
 		smush_selected_images_btn = $('#wpo_smush_images_btn'),
+		smush_mark_as_compressed_btn = $('#wpo_smush_mark_as_compressed'),
 		smush_single_image_btn = $('.wpo_smush_single_image .button'),
 		smush_single_restore_btn = $('.wpo_restore_single_image .button'),
 		smush_view_logs_btn = $('.wpo_smush_get_logs'),
+		smush_delete_backup_images_btn = $('#wpo_smush_delete_backup_btn'),
 		compression_server_select = $('.compression_server'),
 		smush_images_tab_loaded = false,
 		smush_service_features = [],
@@ -57,6 +58,22 @@ var WP_Optimize_Smush = function() {
 	if ($('#smush-metabox').length > 0) {
 		update_view_available_options();
 	}
+
+	smush_images_grid.on('change', 'input[type="checkbox"]', function() {
+		update_smush_action_buttons_state();
+	});
+
+	/**
+	 * Disable smush actions buttons if no images selected.
+	 */
+	function update_smush_action_buttons_state() {
+		var state = (0 == $('input[type="checkbox"]:checked', smush_images_grid).length);
+
+		smush_selected_images_btn.prop('disabled', state);
+		smush_mark_as_compressed_btn.prop('disabled', state);
+	}
+
+	update_smush_action_buttons_state();
 
 	/**
 	 * Handles change of smush service provider
@@ -97,6 +114,37 @@ var WP_Optimize_Smush = function() {
 	});
 
 	/**
+	 * Mark as compressed
+	 */
+	smush_mark_as_compressed_btn.off().on('click', function() {
+		if (0 == $('#wpo_smush_images_grid input[type="checkbox"]:checked').length) {
+			$('#smush-information-modal #smush-information').text(wposmush.please_select_compressed_images)
+			update_view_modal_message($('#smush-information-modal'), $.unblockUI);
+			return;
+		}
+
+		var selected_images = [],
+			image;
+
+		$('#wpo_smush_images_grid input:checked').each(function() {
+			image = {
+				'attachment_id':$(this).val(),
+				'blog_id': $(this).data('blog')
+			};
+			selected_images.push(image);
+		});
+
+		update_view_modal_message(wposmush.please_updating_images_info);
+
+		smush_manager_send_command('mark_as_compressed', {selected_images: selected_images}, function(response) {
+			$('#smush-information-modal #smush-information').text(response.summary);
+			update_view_modal_message($('#smush-information-modal'), $.unblockUI);
+			// refresh images list.
+			get_info_from_smush_manager();
+		});
+	});
+
+	/**
 	 * Refresh image list
 	 */
 	smush_images_refresh_btn.off().on('click', function() {
@@ -108,6 +156,7 @@ var WP_Optimize_Smush = function() {
 	 */
 	smush_images_select_all_btn.off().on('click', function() {
 		$('#wpo_smush_images_grid input[type="checkbox"]').prop("checked", true);
+		update_smush_action_buttons_state();
 	});
 
 
@@ -116,6 +165,7 @@ var WP_Optimize_Smush = function() {
 	 */
 	smush_images_select_none_btn.off().on('click', function() {
 		$('#wpo_smush_images_grid input[type="checkbox"]').prop("checked", false);
+		update_smush_action_buttons_state();
 	});
 
 	/**
@@ -131,7 +181,7 @@ var WP_Optimize_Smush = function() {
 					width: '80%',
 					height: '80%',
 					top: '15%',
-					left: '15%',
+					left: '15%'
 				}
 			});
 			$("#log-panel").html("<pre>" + resp + "</pre>");
@@ -139,6 +189,25 @@ var WP_Optimize_Smush = function() {
 			$("#smush-log-modal a").attr('href', download_link);
 			console.log(download_link);
 		}, false);
+	});
+
+	/**
+	 * Handle delete all backup images button click.
+	 */
+	smush_delete_backup_images_btn.on('click', function() {
+
+		if (!confirm(wposmush.delete_image_backup_confirm)) return;
+		smush_delete_backup_images_btn.prop('disabled', true);
+		var spinner = $('#wpo_smush_delete_backup_spinner'),
+			done = $('#wpo_smush_delete_backup_done');
+
+		spinner.show();
+
+		smush_manager_send_command('clean_all_backup_images', {}, function() {
+			spinner.hide();
+			smush_delete_backup_images_btn.prop('disabled', false);
+			done.css('display', 'inline-block').delay(3000).fadeOut();
+		});
 	});
 
 	/**
@@ -188,12 +257,17 @@ var WP_Optimize_Smush = function() {
 
 
 	/**
-	 * Binds pending tasks cancel button
+	 * Binds smush cancel button
 	 */
-	smush_images_pending_tasks_cancel_btn.on('click', function(e) {
+	$('body').on('click', '#wpo_smush_images_pending_tasks_cancel_button', function(e) {
+
 		smush_manager_send_command('clear_pending_images', {}, function(resp) {
+			$.unblockUI();
 			if (resp.status) {
-				smush_images_pending_tasks_container.delay(3000).fadeOut();
+				get_info_from_smush_manager();
+				reset_view_bulk_smush();
+			} else {
+				console.log('Cancelling pending images apparently failed.', resp);
 			}
 		});
 	});
@@ -204,7 +278,7 @@ var WP_Optimize_Smush = function() {
 	$('body').on('click', '.wpo_smush_single_image .button', function() {
 
 		image = {
-			'attachment_id':$(this).attr('id').substring(15),
+			'attachment_id':$(this).data('id'),
 			'blog_id': $(this).data('blog')
 		};
 
@@ -221,7 +295,7 @@ var WP_Optimize_Smush = function() {
 			'image_quality': image_quality,
 			'lossy_compression': lossy_compression,
 			'back_up_original': $('#smush_backup_' + image.attachment_id).is(":checked"),
-			'preserve_exif': $('#smush_exif_' + image.attachment_id).is(":checked"),
+			'preserve_exif': $('#smush_exif_' + image.attachment_id).is(":checked")
 		}
 
 		console.log("Compressing Image : " + image.attachment_id);
@@ -251,6 +325,59 @@ var WP_Optimize_Smush = function() {
 		image_id = clicked_image.substring(25);
 		console.log("Restoring Image : " + image_id);
 		restore_selected_image(image_id);
+	});
+
+	/**
+	 * Mark as compressed
+	 */
+	$('body').on('click', '.wpo_smush_mark_single_image .button', function() {
+		var image = {
+			'attachment_id':$(this).data('id'),
+			'blog_id': $(this).data('blog')
+		},
+			wrapper = $(this).closest('#smush-metabox-inside-wrapper');
+
+		update_view_modal_message(wposmush.please_updating_images_info);
+
+		smush_manager_send_command('mark_as_compressed', {selected_images: [ image ]}, function(response) {
+			$('#smush-information-modal #smush-information').text(response.summary);
+			update_view_modal_message($('#smush-information-modal'), $.unblockUI);
+
+			if (response.status) {
+				$('.wpo_smush_single_image', wrapper).hide();
+				$('.toggle-smush-advanced', wrapper).removeClass('opened');
+				$('.wpo_smush_mark_single_image', wrapper).hide();
+				$('.wpo_smush_unmark_single_image', wrapper).show();
+				$('.wpo_restore_single_image', wrapper).show();
+				$('#smush_info', wrapper).text(response.info);
+			}
+		});
+	});
+
+	/**
+	 * Unmark as uncompressed
+	 */
+	$('body').on('click', '.wpo_smush_unmark_single_image .button', function() {
+		var image = {
+			'attachment_id':$(this).data('id'),
+			'blog_id': $(this).data('blog')
+		},
+			wrapper = $(this).closest('#smush-metabox-inside-wrapper');
+
+		update_view_modal_message(wposmush.please_updating_images_info);
+
+		smush_manager_send_command('mark_as_compressed', {selected_images: [ image ], unmark: true}, function(response) {
+			$('#smush-information-modal #smush-information').text(response.summary);
+			update_view_modal_message($('#smush-information-modal'), $.unblockUI);
+
+			if (response.status) {
+				$('.wpo_smush_single_image', wrapper).show();
+				$('.wpo_smush_mark_single_image', wrapper).show();
+				$('.wpo_smush_unmark_single_image', wrapper).hide();
+				$('.wpo_restore_single_image', wrapper).hide();
+				$('#smush_info', wrapper).text('');
+			}
+		});
 	});
 
 	$('body').on('click', '#smush-log-modal .close, #smush-information-modal .information-modal-close', function() {
@@ -308,6 +435,7 @@ var WP_Optimize_Smush = function() {
 			handle_response_from_smush_manager(resp, update_view_show_uncompressed_images);
 			update_view_available_options();
 			disable_image_optimization_controls(false);
+			update_smush_action_buttons_state();
 		});
 	}
 
@@ -335,7 +463,7 @@ var WP_Optimize_Smush = function() {
 				'image_quality': $('#image_quality').val(),
 				'lossy_compression': $('#smush-lossy-compression').is(":checked"),
 				'back_up_original': $('#smush-backup-original').is(":checked"),
-				'preserve_exif': $('#smush-preserve-exif').is(":checked"),
+				'preserve_exif': $('#smush-preserve-exif').is(":checked")
 			}
 		}
 		
@@ -367,9 +495,11 @@ var WP_Optimize_Smush = function() {
 			'image_quality': image_quality,
 			'lossy_compression': lossy_compression,
 			'back_up_original': $('#smush-backup-original').is(":checked"),
+			'back_up_delete_after': $('#smush-backup-delete').is(":checked"),
+			'back_up_delete_after_days': $('#smush-backup-delete-days').val(),
 			'preserve_exif': $('#smush-preserve-exif').is(":checked"),
 			'autosmush': $('#smush-automatically').is(":checked"),
-			'show_smush_metabox': $('#smush-show-metabox').is(":checked"),
+			'show_smush_metabox': $('#smush-show-metabox').is(":checked")
 		}
 
 		smush_manager_send_command('update_smush_options', smush_options, function(resp) {
@@ -615,7 +745,6 @@ var WP_Optimize_Smush = function() {
 
 		for (feature in features[service]) {
 			$('.' + feature).prop('disabled', !features[service][feature]);
-			$('.' + feature).prop('checked', features[service][feature]);
 		}
 
 		$('.wpo_smush_image').each(function() {
@@ -642,6 +771,7 @@ var WP_Optimize_Smush = function() {
 			smush_images_save_options_btn,
 			smush_images_refresh_btn,
 			smush_images_pending_tasks_btn,
+			smush_mark_as_compressed_btn,
 		], function(i, el) {
 			el.prop('disabled', disable);
 		});
@@ -716,7 +846,9 @@ var WP_Optimize_Smush = function() {
 				$(".wpo_restore_single_image").show();
 
 				$("#smush_info").text(resp.summary);
-				
+
+				$('.wpo_smush_mark_single_image').hide();
+
 				if (resp.restore_possible) {
 					$(".restore_possible").show();
 				} else {
@@ -725,6 +857,10 @@ var WP_Optimize_Smush = function() {
 			} else {
 				$(".wpo_smush_single_image").show();
 				$(".wpo_restore_single_image").hide();
+
+				var wrapper = $("#smush_info").closest('#smush-metabox-inside-wrapper');
+
+				$('.wpo_smush_mark_single_image').show();
 			}
 		} else {
 			$("#smush-information").text(resp.error_message)

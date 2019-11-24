@@ -29,7 +29,9 @@ if(!empty($post_types)){
 		$post_ids = get_post_ids_by_taxonomy_terms();
 
 		$related_post_ids = get_post_meta( $post_id, 'related_post_ids', true );
-		
+
+
+
 		//echo '<pre>'.var_export($post_id, true).'</pre>';		
 		//echo '<pre>'.var_export($related_post_ids, true).'</pre>';
 		if(!empty($related_post_ids))
@@ -56,7 +58,14 @@ if(!empty($post_types)){
 					
 				echo '<div class="post-list '.$slider_class.'">';
 
-				$args = array('post_type' => $post_type, 'post_status' => 'publish', 'post__in'=> $post_ids,'post__not_in' => $post_id, 'orderby' => 'post__in','showposts' => $max_post_count, 'ignore_sticky_posts' => 1);
+				$args = array('post_type' => $post_type,
+                    'post_status' => 'publish',
+                    'post__in'=> $post_ids,
+                    'post__not_in' => $post_id,
+                    'orderby' => $orderby,
+                    'order' => $order,
+                    'showposts' => $max_post_count,
+                    'ignore_sticky_posts' => 1);
 				
 
 				$wp_query = new WP_Query($args);	

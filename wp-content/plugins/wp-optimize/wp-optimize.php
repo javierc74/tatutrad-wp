@@ -3,7 +3,7 @@
 Plugin Name: WP-Optimize - Clean, Compress, Cache
 Plugin URI: https://getwpo.com
 Description: WP-Optimize makes your site fast and efficient. It cleans the database, compresses images and caches pages. Fast sites attract more traffic and users.
-Version: 3.0.11
+Version: 3.0.13
 Author: David Anderson, Ruhani Rabin, Team Updraft
 Author URI: https://updraftplus.com
 Text Domain: wp-optimize
@@ -15,7 +15,7 @@ if (!defined('ABSPATH')) die('No direct access allowed');
 
 // Check to make sure if WP_Optimize is already call and returns.
 if (!class_exists('WP_Optimize')) :
-define('WPO_VERSION', '3.0.11');
+define('WPO_VERSION', '3.0.13');
 define('WPO_PLUGIN_URL', plugin_dir_url(__FILE__));
 define('WPO_PLUGIN_MAIN_PATH', plugin_dir_path(__FILE__));
 define('WPO_PREMIUM_NOTIFICATION', false);
@@ -92,7 +92,9 @@ class WP_Optimize {
 	}
 	
 	public function admin_page_wpo_images_smush() {
-		$this->include_template('images/smush.php');
+		$options = Updraft_Smush_Manager()->get_smush_options();
+		$custom = 100 == $options['image_quality'] || 90 == $options['image_quality'] ? false : true;
+		$this->include_template('images/smush.php', false, array('smush_options' => $options, 'custom' => $custom));
 	}
 
 	public static function instance() {
@@ -551,7 +553,6 @@ class WP_Optimize {
 		$result = json_encode($results);
 
 		// Requires PHP 5.3+
-		// @codingStandardsIgnoreLine
 		$json_last_error = function_exists('json_last_error') ? json_last_error() : false;
 
 		// if json_encode returned error then return error.
@@ -621,7 +622,7 @@ class WP_Optimize {
 
 		echo '<div id="wp-optimize-wrap">';
 		
-		$this->include_template('admin-page-header.php', false);
+		$this->include_template('admin-page-header.php', false, array('show_notices' => !$this->install_or_update_notice->show_current_notice()));
 
 		do_action('wpo_admin_after_header');
 
@@ -956,7 +957,7 @@ class WP_Optimize {
 			'are_you_sure_you_want_to_remove_logging_destination' => __('Are you sure you want to remove this logging destination?', 'wp-optimize'),
 			'fill_all_settings_fields' => __('Before saving, you need to complete the currently incomplete settings (or remove them).', 'wp-optimize'),
 			'table_was_not_repaired' => __('%s was not repaired. For more details, please check the logs (configured in your logging destinations settings).', 'wp-optimize'),
-			'are_you_sure_you_want_to_remove_this_table' => __('Are you sure you want to remove this table?', 'wp-optimize'),
+			'are_you_sure_you_want_to_remove_this_table' => __('WARNING - some plugins might not be detected as installed or activated if they are in unknown folders (for example premium plugins).', 'wp-optimize').' '.__('Only delete a table if you are sure of what you are doing, and after taking a backup.', 'wp-optimize')." \r".__('Are you sure you want to remove this table?', 'wp-optimize'),
 			'table_was_not_deleted' => __('%s was not deleted. For more details, please check your logs configured in logging destinations settings.', 'wp-optimize'),
 			'please_use_positive_integers' => __('Please use positive integers.', 'wp-optimize'),
 			'please_use_valid_values' => __('Please use valid values.', 'wp-optimize'),
@@ -1175,6 +1176,14 @@ class WP_Optimize {
 			}
 		}
 		return $how_many_overdue;
+	}
+
+	/**
+	 * Run updates on plugin activation.
+	 */
+	public function run_updates() {
+		include_once(WPO_PLUGIN_MAIN_PATH.'/includes/class-wp-optimize-updates.php');
+		WP_Optimize_Updates::check_updates();
 	}
 
 	/**
@@ -1767,7 +1776,6 @@ class WP_Optimize {
 		if (function_exists('get_sites')) {
 			$sites = get_sites(array('network_id' => null, 'number' => 999999));
 		} elseif (function_exists('wp_get_sites')) {
-			// @codingStandardsIgnoreLine
 			$sites = wp_get_sites(array('network_id' => null, 'limit' => 999999));
 		}
 		return $sites;
@@ -1847,7 +1855,6 @@ class WP_Optimize {
 		// 32MB
 		if ($mp < 33554432) {
 			$save = $wpdb->show_errors(false);
-			// @codingStandardsIgnoreLine
 			$req = @$wpdb->query("SET GLOBAL max_allowed_packet=33554432");
 			$wpdb->show_errors($save);
 
@@ -1978,6 +1985,7 @@ function wpo_activation_actions() {
 	}
 
 	WP_Optimize()->get_options()->set_default_options();
+	WP_Optimize()->run_updates();
 }
 
 /**

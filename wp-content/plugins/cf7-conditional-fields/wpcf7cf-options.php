@@ -29,10 +29,6 @@ if (!is_array($wpcf7cf_options)) {
 	update_option(WPCF7CF_OPTIONS, $wpcf7cf_options);
 }
 
-if(isset($_POST['reset'])) {
-    update_option(WPCF7CF_OPTIONS, $wpcf7cf_default_options);
-    $wpcf7cf_options['wpcf7cf_settings_saved'] = 0;
-}
 
 // this setting will only be 0 as long as the user has not saved any settings. Once the user has saved the WPCF7CF settings, this value will always remain 1.
 if (!key_exists('wpcf7cf_settings_saved',$wpcf7cf_options)) $wpcf7cf_options['wpcf7cf_settings_saved'] = 0;
@@ -40,9 +36,6 @@ if (!key_exists('wpcf7cf_settings_saved',$wpcf7cf_options)) $wpcf7cf_options['wp
 if ($wpcf7cf_options['wpcf7cf_settings_saved'] == 0) {
     $wpcf7cf_options = $wpcf7cf_default_options;
 }
-
-// LINE 37: removed some ninja_forms related code. Not sure what it was doing here. Keep this reminder here for a while in case problems pop up.
-// Remove in future update. (Jules 17/02/2018)
 
 add_action( 'admin_enqueue_scripts', 'wpcf7cf_load_page_options_wp_admin_style' );
 function wpcf7cf_load_page_options_wp_admin_style() {
@@ -73,7 +66,6 @@ function wpcf7cf_options_page() {
     ?>
 
     <div class="wrap wpcf7cf-admin-wrap">
-        <?php screen_icon(); ?>
         <h2>Contact Form 7 - Conditional Fields Settings</h2>
         <?php if (!$wpcf7cf_options['notice_dismissed']) { ?>
         <div class="wpcf7cf-options-notice notice notice-warning is-dismissible"><div style="padding: 10px 0;"><strong>Notice</strong>: These are global settings for Contact Form 7 - Conditional Fields. <br><br><strong>How to create/edit conditional fields?</strong>
@@ -303,7 +295,6 @@ function wpcf7cf_checkbox($slug, $args) {
     <div class="option-line">
         <span class="label"><?php echo $label ?></span>
         <span class="field">
-			
 			<input type="checkbox" data-default-value="<?php echo $default ?>" name="<?php echo WPCF7CF_OPTIONS.'['.$slug.']' ?>" value="1" <?php checked('1', $wpcf7cf_options[$slug]) ?>>
 		</span>
         <span class="description"><?php echo $description ?><?php if (!empty($default)) echo ' (Default: '.$default.')' ?></span>
@@ -318,6 +309,13 @@ function wpcf7cf_regex_collection() {
 
 add_action('admin_init', 'wpcf7cf_admin_init');
 function wpcf7cf_admin_init(){
+    global $wpcf7cf_default_options, $wpcf7cf_options;
+
+    if(isset($_POST['reset']) && current_user_can( 'wpcf7_edit_contact_form' ) ) {
+        update_option(WPCF7CF_OPTIONS, $wpcf7cf_default_options);
+        $wpcf7cf_options['wpcf7cf_settings_saved'] = 0;
+    }
+
     register_setting( WPCF7CF_OPTIONS, WPCF7CF_OPTIONS, 'wpcf7cf_options_sanitize' );
 }
 

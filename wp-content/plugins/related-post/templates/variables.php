@@ -177,9 +177,11 @@ if(!empty($related_post_settings['post_types'])){
 else {
 
 	$post_types = array('post'=>1);
-	}	
-								
-	
+	}
+
+$orderby= isset($related_post_settings['orderby']) ? $related_post_settings['orderby'] : 'date';
+$order = isset($related_post_settings['order']) ? $related_post_settings['order'] : 'DESC';
+
 if(!empty($related_post_settings['max_post_count'])){
 	$max_post_count= $related_post_settings['max_post_count']; 
 	}	

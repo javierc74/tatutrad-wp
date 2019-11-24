@@ -22,11 +22,11 @@ class class_related_post_functions{
 
 
 		$faq['core'] = array(
-							'title'=>__('Core', related_post_textdomain),
+							'title'=>__('Core', 'related-post'),
 							'items'=>array(
 
 											array(
-												'question'=>__('How to display on archive pages ?', related_post_textdomain),
+												'question'=>__('How to display on archive pages ?', 'related-post'),
 												'answer_url'=>'https://pickplugins.com/docs/documentation/related-post/how-to-display-on-archive-pages/',
 												
 												),	
@@ -58,9 +58,9 @@ class class_related_post_functions{
 		
 		$layout_items = array(
 		
-							'thumbnail'=>array('name'=>__('Thumbnail',related_post_textdomain), 'options'=>array()),
-							'title'=>array('name'=>__('Title',related_post_textdomain), 'options'=>array()),
-							'excerpt'=>array('name'=>__('Excerpt',related_post_textdomain), 'options'=>array()),												
+							'thumbnail'=>array('name'=>__('Thumbnail','related-post'), 'options'=>array()),
+							'title'=>array('name'=>__('Title','related-post'), 'options'=>array()),
+							'excerpt'=>array('name'=>__('Excerpt','related-post'), 'options'=>array()),
 
 							);
 		

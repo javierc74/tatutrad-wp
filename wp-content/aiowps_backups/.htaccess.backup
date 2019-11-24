@@ -1,12 +1,4 @@
 
-# BEGIN HTTPS Redirection Plugin
-<IfModule mod_rewrite.c>
-RewriteEngine On
-RewriteCond %{SERVER_PORT} !^443$
-RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
-</IfModule>
-# END HTTPS Redirection Plugin
-
 # BEGIN WordPress
 <IfModule mod_rewrite.c>
 RewriteEngine On
@@ -18,4 +10,3 @@ RewriteRule . /index.php [L]
 </IfModule>
 
 # END WordPress
-

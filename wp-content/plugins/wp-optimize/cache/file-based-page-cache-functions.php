@@ -475,6 +475,8 @@ if (!function_exists('wpo_get_url_path')) :
 function wpo_get_url_path($url = '') {
 	$url = '' == $url ? wpo_current_url() : $url;
 	$url_parts = parse_url($url);
+
+	if (!isset($url_parts['host'])) $url_parts['host'] = '';
 	if (!isset($url_parts['path'])) $url_parts['path'] = '';
 
 	return $url_parts['host'].$url_parts['path'];
@@ -488,9 +490,10 @@ endif;
  */
 if (!function_exists('wpo_current_url')) :
 function wpo_current_url() {
+	$http_host = isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : '';
 	return rtrim('http' . ((isset($_SERVER['HTTPS']) && ('on' == $_SERVER['HTTPS'] || 1 == $_SERVER['HTTPS']) ||
 			isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && 'https' == $_SERVER['HTTP_X_FORWARDED_PROTO']) ? 's' : '' )
-		. '://' . "{$_SERVER['HTTP_HOST']}{$_SERVER['REQUEST_URI']}", '/');
+		. '://' . $http_host.$_SERVER['REQUEST_URI'], '/');
 }
 endif;
 
@@ -680,6 +683,7 @@ function wpo_delete_files($src, $recursive = true) {
 	}
 
 	$success = true;
+	$has_dir = false;
 
 	if ($recursive) {
 		// N.B. If opendir() fails, then a false positive (i.e. true) will be returned
@@ -704,18 +708,26 @@ function wpo_delete_files($src, $recursive = true) {
 			}
 			closedir($dir);
 		}
-
-		// Success of this operation is not recorded; we only ultimately care about emptying, not removing entirely (empty folders in our context are harmless)
-		rmdir($src);
 	} else {
 		// Not recursive, so we only delete the files
 		$files = scandir($src);
 		foreach ($files as $file) {
-			if (is_dir($src . '/' . $file) || '.' == $file || '..' == $file) continue;
+			if ('.' == $file || '..' == $file) continue;
+
+			if (is_dir($src . '/' . $file)) {
+				$has_dir = true;
+				continue;
+			}
+
 			if (!unlink($src . '/' . $file)) {
 				$success = false;
 			}
 		}
+	}
+
+	if ($success && !$has_dir) {
+		// Success of this operation is not recorded; we only ultimately care about emptying, not removing entirely (empty folders in our context are harmless)
+		rmdir($src);
 	}
 
 	// delete cached information about cache size.

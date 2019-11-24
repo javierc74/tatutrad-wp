@@ -1,9 +1,10 @@
 <?php
 
-class ContactForm7ConditionalFields {
+class CF7CF {
     private $hidden_fields = array();
     private $visible_groups = array();
     private $hidden_groups = array();
+    private $repeaters = array();
 
     function __construct() {
 
@@ -63,9 +64,14 @@ class ContactForm7ConditionalFields {
 
     	foreach ($wpcf7_config_validator->collect_error_messages() as $err_type => $err) {
 
+//    	    print_r($err_type);
 
 		    $parts = explode('.',$err_type);
+
 		    $property = $parts[0];
+
+		    if ($property == 'form') continue; // the 'form' field can be safely validated by CF7. No need to suppress it.
+
 		    $sub_prop = $parts[1];
 		    $prop_val = $cf->prop($property)[$sub_prop];
 
@@ -151,22 +157,26 @@ class ContactForm7ConditionalFields {
      */
     function skip_validation_for_hidden_fields($result, $tags) {
 
-        if (count($this->hidden_fields) == 0) return $result;
-
-        $return_result = new WPCF7_Validation();
+        if(isset($_POST)) {
+            $this->set_hidden_fields_arrays($_POST);
+        }
 
         $invalid_fields = $result->get_invalid_fields();
+        $return_result = new WPCF7_Validation();
 
-        if (!is_array($invalid_fields) || count($invalid_fields) == 0) return $result;
-
-        foreach ($invalid_fields as $invalid_field_key => $invalid_field_data) {
-            if (!in_array($invalid_field_key, $this->hidden_fields)) {
-                // the invalid field is not a hidden field, so we'll add it to the final validation result
-                $return_result->invalidate($invalid_field_key, $invalid_field_data['reason']);
+        if (count($this->hidden_fields) == 0 || !is_array($invalid_fields) || count($invalid_fields) == 0) {
+            $return_result = $result;
+        } else {
+            foreach ($invalid_fields as $invalid_field_key => $invalid_field_data) {
+                if (!in_array($invalid_field_key, $this->hidden_fields)) {
+                    // the invalid field is not a hidden field, so we'll add it to the final validation result
+                    $return_result->invalidate($invalid_field_key, $invalid_field_data['reason']);
+                }
             }
         }
 
-        return $return_result;
+        return apply_filters('wpcf7cf_validate', $return_result, $tags);
+
     }
 
 
@@ -248,6 +258,8 @@ class ContactForm7ConditionalFields {
         }
         $this->hidden_groups = json_decode(stripslashes($posted_data['_wpcf7cf_hidden_groups']));
         $this->visible_groups = json_decode(stripslashes($posted_data['_wpcf7cf_visible_groups']));
+        $this->repeaters = json_decode(stripslashes($posted_data['_wpcf7cf_repeaters']));
+        $this->steps = json_decode(stripslashes($posted_data['_wpcf7cf_steps']));
     }
 
 	function hide_hidden_mail_fields($form,$abort,$submission) {
@@ -255,9 +267,14 @@ class ContactForm7ConditionalFields {
 		$mails = ['mail','mail_2','messages'];
 		foreach ($mails as $mail) {
 			foreach ($props[$mail] as $key=>$val) {
-				$props[$mail][$key] = preg_replace_callback(WPCF7CF_REGEX_MAIL_GROUP, array($this, 'hide_hidden_mail_fields_regex_callback'), $val );
+
+                $parser = new Wpcf7cfMailParser($val, $this->visible_groups, $this->hidden_groups, $this->repeaters, $_POST);
+
+				// $props[$mail][$key] = preg_replace_callback(WPCF7CF_REGEX_MAIL_GROUP, array($this, 'hide_hidden_mail_fields_regex_callback'), $val );
+				$props[$mail][$key] = $parser->getParsedMail();
 			}
-		}
+        }
+        //$props['mail']['body'] = 'xxx';
 		$form->set_properties($props);
 	}
 
@@ -276,9 +293,72 @@ class ContactForm7ConditionalFields {
             return $matches[0];
         }
     }
+
+    public static function parse_conditions($string, $format='array') {
+        // Parse stuff like "show [g1] if [field] equals 2" to Array
+
+        preg_match_all(WPCF7CF_REGEX_CONDITIONS, $string, $matches);
+
+        $conditions = [];
+
+        $prev_then_field = '';
+        foreach ($matches[0] as $i=>$line) {
+            $then_field = $matches[1][$i];
+            $if_field   = $matches[2][$i];
+            $operator   = $matches[3][$i];
+            $if_value   = $matches[4][$i];
+
+            $index = count($conditions);
+
+            if ($then_field == '') {
+                $index = $index -1;
+                $then_field = $prev_then_field;
+            } else {
+                $conditions[$index]['then_field'] = $then_field;
+            }
+
+            $conditions[$index]['and_rules'][] = [
+                'if_field' => $if_field,
+                'operator' => $operator,
+                'if_value' => $if_value,
+            ];
+
+            $prev_then_field = $then_field;
+
+        }
+
+        $conditions = array_values($conditions);
+
+        if ($format == 'array') {
+            return $conditions;
+        } else if ($format == 'json') {
+            return json_encode($conditions);
+        }
+    }
+
+    /**
+     * load the conditions from the form's post_meta
+     *
+     * @param string $form_id
+     * @return void
+     */
+    public static function getConditions($form_id) {
+        return get_post_meta($form_id,'wpcf7cf_options',true); // the meta key 'wpcf7cf_options' is a bit misleading at this point, because it only holds the form's conditions, no other options/settings
+    }
+
+    
+    /**
+     * save the conditions to the form's post_meta
+     *
+     * @param string $form_id
+     * @return void
+     */
+    public static function setConditions($form_id, $conditions) {
+        return update_post_meta($form_id,'wpcf7cf_options',$conditions); // the meta key 'wpcf7cf_options' is a bit misleading at this point, because it only holds the form's conditions, no other options/settings
+    }
 }
 
-new ContactForm7ConditionalFields;
+new CF7CF;
 
 add_filter( 'wpcf7_contact_form_properties', 'wpcf7cf_properties', 10, 2 );
 
@@ -312,7 +392,7 @@ function wpcf7cf_properties($properties, $wpcf7form) {
 
 			    array_push($stack,$tag_html_type);
 
-			    echo '<'.$tag_html_type.' data-id="'.$tag_id.'" data-orig_id="'.$tag_id.'" '.implode(' ',$tag_html_data).' data-class="wpcf7cf_group">';
+			    echo '<'.$tag_html_type.' data-id="'.$tag_id.'" data-orig_data_id="'.$tag_id.'" '.implode(' ',$tag_html_data).' data-class="wpcf7cf_group">';
 		    } else if ($form_part == '[/group]') {
 	    		echo '</'.array_pop($stack).'>';
 		    } else {
@@ -334,7 +414,7 @@ function wpcf7cf_form_hidden_fields($hidden_fields) {
 
     $options = array(
         'form_id' => $current_form_id,
-        'conditions' => get_post_meta($current_form_id,'wpcf7cf_options', true),
+        'conditions' => CF7CF::getConditions($current_form_id),
         'settings' => get_option(WPCF7CF_OPTIONS)
     );
 
@@ -344,6 +424,8 @@ function wpcf7cf_form_hidden_fields($hidden_fields) {
         '_wpcf7cf_hidden_group_fields' => '',
         '_wpcf7cf_hidden_groups' => '',
         '_wpcf7cf_visible_groups' => '',
+        '_wpcf7cf_repeaters' => '[]',
+        '_wpcf7cf_steps' => '{}',
         '_wpcf7cf_options' => ''.json_encode($options),
     ));
 }

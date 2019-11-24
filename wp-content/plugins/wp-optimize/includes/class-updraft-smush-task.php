@@ -418,5 +418,21 @@ abstract class Updraft_Smush_Task extends Updraft_Task_1_1 {
 
 		return $attachment_images;
 	}
+
+	/**
+	 * Check the mime type of a downloaded file, returns true if it is a valid image mime type.
+	 *
+	 * @param string $file_buffer The buffer string downloaded from the compression service
+	 * @return boolean
+	 */
+	protected function is_downloaded_image_buffer_mime_type_valid($file_buffer) {
+		// If the required class does not exist, return true to avoid breaking the functionality
+		if (!class_exists('finfo')) return true;
+		$accepted_types = apply_filters('wpo_image_compression_accepted_mime_types', array('image/png', 'image/jpeg', 'image/jpg', 'image/gif', 'image/webp'));
+		// The ignore rule below is added because "finfo" doesn't exist in PHP5.2.
+		$finfo = new finfo(FILEINFO_MIME_TYPE); // phpcs:ignore PHPCompatibility.Classes.NewClasses.finfoFound, PHPCompatibility.Constants.NewConstants.fileinfo_mime_typeFound
+		$mime_type = $finfo->buffer($file_buffer);
+		return in_array($mime_type, $accepted_types);
+	}
 }
 endif;

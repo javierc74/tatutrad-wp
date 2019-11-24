@@ -405,7 +405,6 @@ class WP_Optimize_Commands {
 		$settings = json_decode($params['settings'], true);
 
 		// check if valid json file posted (requires PHP 5.3+)
-		// @codingStandardsIgnoreLine
 		if ((function_exists('json_last_error') && 0 != json_last_error()) || empty($settings)) {
 			return array('errors' => array(__('Please upload a valid settings file.', 'wp-optimize')));
 		}

@@ -179,10 +179,16 @@ if ( ! defined('ABSPATH')) exit; // if direct access
 			else {
 
 				$post_types = array('post'=>1);
-				}	
-											
-				
-			if(!empty($related_post_settings['max_post_count'])){
+				}
+
+
+        $orderby= isset($related_post_settings['orderby']) ? $related_post_settings['orderby'] : 'date';
+        $order = isset($related_post_settings['order']) ? $related_post_settings['order'] : 'DESC';
+
+
+
+
+        if(!empty($related_post_settings['max_post_count'])){
 				$max_post_count= $related_post_settings['max_post_count']; 
 				}	
 			else {
@@ -627,8 +633,12 @@ if ( ! defined('ABSPATH')) exit; // if direct access
 			else {
 
 				$post_types = array('post'=>1);
-				}	
-											
+				}
+
+                $orderby= isset($related_post_settings['orderby']) ? $related_post_settings['orderby'] : 'date';
+                $order = isset($related_post_settings['order']) ? $related_post_settings['order'] : 'DESC';
+
+
 				
 			if(!empty($related_post_settings['max_post_count'])){
 				$max_post_count= $related_post_settings['max_post_count']; 
@@ -974,14 +984,46 @@ if ( ! defined('ABSPATH')) exit; // if direct access
                     }
                     ?>
 
-                </div> 
-                
-                
-                
+                </div>
 
-                
 
-				<div class="option-box">
+                <div class="option-box">
+                    <p class="option-title">Post orderby.</p>
+                    <p class="option-info"></p>
+
+
+                    <select name="related_post_settings[orderby]">
+                        <option value="none" <?php if($orderby=="none")echo "selected"; ?>>None</option>
+                        <option value="ID" <?php if($orderby=="ID")echo "selected"; ?>>ID</option>
+                        <option value="date" <?php if($orderby=="date")echo "selected"; ?>>Date</option>
+                        <option value="rand" <?php if($orderby=="rand")echo "selected"; ?>>Rand</option>
+                        <option value="comment_count" <?php if($orderby=="comment_count")echo "selected"; ?>>Comment Count</option>
+                        <option value="author" <?php if($orderby=="author")echo "selected"; ?>>Author</option>
+                        <option value="title" <?php if($orderby=="title")echo "selected"; ?>>Title</option>
+                        <option value="name" <?php if($orderby=="name")echo "selected"; ?>>Name</option>
+                        <option value="type" <?php if($orderby=="type")echo "selected"; ?>>Type</option>
+                        <option value="menu_order" <?php if($orderby=="menu_order")echo "selected"; ?>>Menu order</option>
+                        <option value="post__in" <?php if($orderby=="post__in")echo "selected"; ?>>post__in</option>
+
+
+                    </select>
+
+                </div>
+
+                <div class="option-box">
+                    <p class="option-title">Post order.</p>
+                    <p class="option-info"></p>
+                    <select name="related_post_settings[order]" >
+                        <option value="DESC" <?php if($order=="DESC")echo "selected"; ?> >DESC</option>
+                        <option value="ASC" <?php if($order=="ASC")echo "selected"; ?> >ASC</option>
+
+                    </select>
+                </div>
+
+
+
+
+                <div class="option-box">
                     <p class="option-title">Maximum number of post to display</p>
                     <p class="option-info"></p>
                     <input placeholder="4" type="text" name="related_post_settings[max_post_count]" value="<?php if(!empty($max_post_count)) echo $max_post_count; ?>" />
@@ -1376,15 +1418,15 @@ if ( ! defined('ABSPATH')) exit; // if direct access
             <li style="display: none;" class="box3 tab-box"> 
             
 				<div class="option-box">
-                    <p class="option-title"><?php _e('Slider Column Number', related_post_textdomain);?></p>
+                    <p class="option-title"><?php _e('Slider Column Number', 'related-post');?></p>
                     
-                    <p class="option-info"><?php _e('In Desktop: (min:1000px and max)', related_post_textdomain);?></p>
+                    <p class="option-info"><?php _e('In Desktop: (min:1000px and max)', 'related-post');?></p>
 					<input type="text" placeholder="4"   name="related_post_settings[slider][column_desktop]" value="<?php echo $slider_column_number_desktop;  ?>" />
 					
-                    <p class="option-info"><?php _e('In Tablet & Small Desktop: (900px max width)', related_post_textdomain);?></p>
+                    <p class="option-info"><?php _e('In Tablet & Small Desktop: (900px max width)', 'related-post');?></p>
                     <input type="text" placeholder="2"  name="related_post_settings[slider][column_tablet]" value="<?php echo $slider_column_number_tablet;  ?>" />  
                    
-                    <p class="option-info"><?php _e('In Mobile: (479px max width)', related_post_textdomain);?></p>
+                    <p class="option-info"><?php _e('In Mobile: (479px max width)', 'related-post');?></p>
                     <input type="text" placeholder="1"  name="related_post_settings[slider][column_mobile]" value="<?php echo $slider_column_number_mobile;  ?>" />
                     
                   
@@ -1394,115 +1436,115 @@ if ( ! defined('ABSPATH')) exit; // if direct access
             
             
 				<div class="option-box">
-                    <p class="option-title"><?php _e('Slider Settings', related_post_textdomain);?></p>                
-                    <p class="option-info"><?php _e('Slider Auto Play', related_post_textdomain);?></p>
+                    <p class="option-title"><?php _e('Slider Settings', 'related-post');?></p>
+                    <p class="option-info"><?php _e('Slider Auto Play', 'related-post');?></p>
                     
                     
                         <select name="related_post_settings[slider][auto_play]">
-                            <option value="true" <?php if(($slider_auto_play=="true")) echo "selected"; ?> ><?php _e('True', related_post_textdomain);?></option>
-                            <option value="false" <?php if(($slider_auto_play=="false")) echo "selected"; ?> ><?php _e('False', related_post_textdomain);?></option>
+                            <option value="true" <?php if(($slider_auto_play=="true")) echo "selected"; ?> ><?php _e('True', 'related-post');?></option>
+                            <option value="false" <?php if(($slider_auto_play=="false")) echo "selected"; ?> ><?php _e('False', 'related-post');?></option>
                         </select>
                         
                         
                         
-                    <p class="option-info"><?php _e('Slider rewind', related_post_textdomain);?></p>
+                    <p class="option-info"><?php _e('Slider rewind', 'related-post');?></p>
                         <select name="related_post_settings[slider][rewind]">
-                            <option value="true" <?php if(($slider_rewind=="true")) echo "selected"; ?> ><?php _e('True', related_post_textdomain);?></option>
-                            <option value="false" <?php if(($slider_rewind=="false")) echo "selected"; ?> ><?php _e('False', related_post_textdomain);?></option>
+                            <option value="true" <?php if(($slider_rewind=="true")) echo "selected"; ?> ><?php _e('True', 'related-post');?></option>
+                            <option value="false" <?php if(($slider_rewind=="false")) echo "selected"; ?> ><?php _e('False', 'related-post');?></option>
                         </select>                        
                         
-                    <p class="option-info"><?php _e('Slider loop', related_post_textdomain);?></p>
+                    <p class="option-info"><?php _e('Slider loop', 'related-post');?></p>
                         <select name="related_post_settings[slider][loop]">
-                            <option value="true" <?php if(($slider_loop=="true")) echo "selected"; ?> ><?php _e('True', related_post_textdomain);?></option>
-                            <option value="false" <?php if(($slider_loop=="false")) echo "selected"; ?> ><?php _e('False', related_post_textdomain);?></option>
+                            <option value="true" <?php if(($slider_loop=="true")) echo "selected"; ?> ><?php _e('True', 'related-post');?></option>
+                            <option value="false" <?php if(($slider_loop=="false")) echo "selected"; ?> ><?php _e('False', 'related-post');?></option>
                         </select>  
                         
-                    <p class="option-info"><?php _e('Slider center', related_post_textdomain);?></p>
+                    <p class="option-info"><?php _e('Slider center', 'related-post');?></p>
                         <select name="related_post_settings[slider][center]">
-                            <option value="true" <?php if(($slider_center=="true")) echo "selected"; ?> ><?php _e('True', related_post_textdomain);?></option>
-                            <option value="false" <?php if(($slider_center=="false")) echo "selected"; ?> ><?php _e('False', related_post_textdomain);?></option>
+                            <option value="true" <?php if(($slider_center=="true")) echo "selected"; ?> ><?php _e('True', 'related-post');?></option>
+                            <option value="false" <?php if(($slider_center=="false")) echo "selected"; ?> ><?php _e('False', 'related-post');?></option>
                         </select>                         
                                                
                         
                         
                         
                         
-                    <p class="option-info"><?php _e('Slider Stop on Hover', related_post_textdomain);?></p>
+                    <p class="option-info"><?php _e('Slider Stop on Hover', 'related-post');?></p>
                     
                         <select name="related_post_settings[slider][stop_on_hover]">
-                            <option value="true" <?php if(($slider_stop_on_hover=="true")) echo "selected"; ?> ><?php _e('True', related_post_textdomain);?></option>
-                            <option value="false" <?php if(($slider_stop_on_hover=="false")) echo "selected"; ?> ><?php _e('False', related_post_textdomain);?></option>
+                            <option value="true" <?php if(($slider_stop_on_hover=="true")) echo "selected"; ?> ><?php _e('True', 'related-post');?></option>
+                            <option value="false" <?php if(($slider_stop_on_hover=="false")) echo "selected"; ?> ><?php _e('False', 'related-post');?></option>
                         </select>    
                         
                         
-                    <p class="option-info"><?php _e('Slider Navigation at Top', related_post_textdomain);?></p>
+                    <p class="option-info"><?php _e('Slider Navigation at Top', 'related-post');?></p>
                     
                         <select name="related_post_settings[slider][navigation]">
-                            <option value="true" <?php if(($slider_navigation=="true")) echo "selected"; ?> ><?php _e('True', related_post_textdomain);?></option>
-                            <option value="false" <?php if(($slider_navigation=="false")) echo "selected"; ?> ><?php _e('False', related_post_textdomain);?></option>
+                            <option value="true" <?php if(($slider_navigation=="true")) echo "selected"; ?> ><?php _e('True', 'related-post');?></option>
+                            <option value="false" <?php if(($slider_navigation=="false")) echo "selected"; ?> ><?php _e('False', 'related-post');?></option>
                         </select>
 
                         
-                        <p class="option-info"><?php _e('Slider Navigation Position', related_post_textdomain);?></p>
+                        <p class="option-info"><?php _e('Slider Navigation Position', 'related-post');?></p>
                         <select name="related_post_settings[slider][navigation_position]">
-                            <option value="topright" <?php if(($slider_navigation_position=="topright")) echo "selected"; ?> ><?php _e('Top Right', related_post_textdomain);?></option>
-                            <option value="middle" <?php if(($slider_navigation_position=="middle")) echo "selected"; ?> ><?php _e('Middle', related_post_textdomain);?></option>
-                            <option value="middle-fixed" <?php if(($slider_navigation_position=="middle-fixed")) echo "selected"; ?> ><?php _e('Middle fixed', related_post_textdomain);?></option>                      
+                            <option value="topright" <?php if(($slider_navigation_position=="topright")) echo "selected"; ?> ><?php _e('Top Right', 'related-post');?></option>
+                            <option value="middle" <?php if(($slider_navigation_position=="middle")) echo "selected"; ?> ><?php _e('Middle', 'related-post');?></option>
+                            <option value="middle-fixed" <?php if(($slider_navigation_position=="middle-fixed")) echo "selected"; ?> ><?php _e('Middle fixed', 'related-post');?></option>
                         
                         </select>
                         
                         
-                    <p class="option-info"><?php _e('Slider Pagination at Bottom', related_post_textdomain);?></p>
+                    <p class="option-info"><?php _e('Slider Pagination at Bottom', 'related-post');?></p>
                     
                         <select name="related_post_settings[slider][pagination]">
-                            <option value="true" <?php if(($slider_pagination=="true")) echo "selected"; ?> ><?php _e('True', related_post_textdomain);?></option>
-                            <option value="false" <?php if(($slider_pagination=="false")) echo "selected"; ?> ><?php _e('False', related_post_textdomain);?></option>
+                            <option value="true" <?php if(($slider_pagination=="true")) echo "selected"; ?> ><?php _e('True', 'related-post');?></option>
+                            <option value="false" <?php if(($slider_pagination=="false")) echo "selected"; ?> ><?php _e('False', 'related-post');?></option>
                         </select>
  
                         
                         
-                       <p class="option-info"><?php _e('Pagination Background Color', related_post_textdomain);?></p> 
+                       <p class="option-info"><?php _e('Pagination Background Color', 'related-post');?></p>
                         <input type="text" name="related_post_settings[slider][pagination_bg]" class="related-post-color" id="" value="<?php echo $slider_pagination_bg; ?>" />
                         
-                        <p class="option-info"><?php _e('Pagination Text Color', related_post_textdomain);?></p> 
+                        <p class="option-info"><?php _e('Pagination Text Color', 'related-post');?></p>
                         <input type="text" name="related_post_settings[slider][pagination_text_color]" class="related-post-color" id="slider_pagination_text_color" value="<?php echo $slider_pagination_text_color; ?>" /> 
                         
-                        <p class="option-info"><?php _e('Pagination Number Counting', related_post_textdomain);?></p> 
+                        <p class="option-info"><?php _e('Pagination Number Counting', 'related-post');?></p>
                         <select name="related_post_settings[slider][pagination_count]">
-                        	<option value="false" <?php if(($slider_pagination_count=="false")) echo "selected"; ?> ><?php _e('False', related_post_textdomain);?></option>
-                            <option value="true" <?php if(($slider_pagination_count=="true")) echo "selected"; ?> ><?php _e('True', related_post_textdomain);?></option>
+                        	<option value="false" <?php if(($slider_pagination_count=="false")) echo "selected"; ?> ><?php _e('False', 'related-post');?></option>
+                            <option value="true" <?php if(($slider_pagination_count=="true")) echo "selected"; ?> ><?php _e('True', 'related-post');?></option>
                             
                         </select>
                         
-                    <p class="option-info"><?php _e('Slide Speed', related_post_textdomain);?></p>
+                    <p class="option-info"><?php _e('Slide Speed', 'related-post');?></p>
 					<input type="text" placeholder="1000" id="slide_speed" name="related_post_settings[slider][slide_speed]" value="<?php echo $slider_slide_speed; ?>"  />    
 
-                    <p class="option-info"><?php _e('Pagination Slide Speed', related_post_textdomain);?></p>
+                    <p class="option-info"><?php _e('Pagination Slide Speed', 'related-post');?></p>
 					<input type="text" placeholder="1000" id="pagination_slide_speed" name="related_post_settings[slider][pagination_speed]" value="<?php echo $slider_pagination_speed; ?>"  />
 
 
-                    <p class="option-info"><?php _e('Slider Touch Drag Enabled', related_post_textdomain);?></p>
+                    <p class="option-info"><?php _e('Slider Touch Drag Enabled', 'related-post');?></p>
                     
                     
                         <select name="related_post_settings[slider][touch_drag]">
-                            <option value="true" <?php if(($slider_touch_drag=="true")) echo "selected"; ?> ><?php _e('True', related_post_textdomain);?></option>
-                            <option value="false" <?php if(($slider_touch_drag=="false")) echo "selected"; ?> ><?php _e('False', related_post_textdomain);?></option>
+                            <option value="true" <?php if(($slider_touch_drag=="true")) echo "selected"; ?> ><?php _e('True', 'related-post');?></option>
+                            <option value="false" <?php if(($slider_touch_drag=="false")) echo "selected"; ?> ><?php _e('False', 'related-post');?></option>
                         </select>
 
 
-                    <p class="option-info"><?php _e('Slider Mouse Drag Enabled', related_post_textdomain);?></p>
+                    <p class="option-info"><?php _e('Slider Mouse Drag Enabled', 'related-post');?></p>
                     
                         <select name="related_post_settings[slider][mouse_drag]">
-                            <option value="true" <?php if(($slider_mouse_drag=="true")) echo "selected"; ?> ><?php _e('True', related_post_textdomain);?></option>
-                            <option value="false" <?php if(($slider_mouse_drag=="false")) echo "selected"; ?> ><?php _e('False', related_post_textdomain);?></option>
+                            <option value="true" <?php if(($slider_mouse_drag=="true")) echo "selected"; ?> ><?php _e('True', 'related-post');?></option>
+                            <option value="false" <?php if(($slider_mouse_drag=="false")) echo "selected"; ?> ><?php _e('False', 'related-post');?></option>
                         </select>
 
 
-                    <p class="option-info"><?php _e('RTL Enabled', related_post_textdomain);?></p>
+                    <p class="option-info"><?php _e('RTL Enabled', 'related-post');?></p>
                     
                         <select name="related_post_settings[slider][rtl]">
-                        <option value="false" <?php if(($slider_rtl=="false")) echo "selected"; ?> ><?php _e('False', related_post_textdomain);?></option>
-                            <option value="true" <?php if(($slider_rtl=="true")) echo "selected"; ?> ><?php _e('True', related_post_textdomain);?></option>
+                        <option value="false" <?php if(($slider_rtl=="false")) echo "selected"; ?> ><?php _e('False', 'related-post');?></option>
+                            <option value="true" <?php if(($slider_rtl=="true")) echo "selected"; ?> ><?php _e('True', 'related-post');?></option>
                             
                         </select>
                         

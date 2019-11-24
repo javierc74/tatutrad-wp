@@ -23,7 +23,7 @@ class class_related_post_post_meta{
 		if (in_array($post_type, $post_types)) {
 		
 			add_meta_box('related_post_metabox',
-				__( 'Related Post', related_post_textdomain ),
+				__( 'Related Post', 'related-post' ),
 				array($this, 'related_post_meta_box_function'),
 				$post_type,
 				'normal',

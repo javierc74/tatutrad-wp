@@ -1,9 +1,9 @@
 <?php
 /*
 Plugin Name: Related Post
-Plugin URI: 
+Plugin URI: http://wordpress.org/plugins/related-post/
 Description: Display Related Post under post by tags and category.
-Version: 2.0.4
+Version: 2.0.6
 Author: pickplugins
 Author URI: http://pickplugins.com
 License: GPLv2 or later
@@ -22,13 +22,8 @@ class RelatedPost{
 		define('related_post_plugin_url', WP_PLUGIN_URL . '/' . plugin_basename( dirname(__FILE__) ) . '/' );
 		define('related_post_plugin_dir', plugin_dir_path( __FILE__ ) );
 		define('related_post_wp_url', 'http://wordpress.org/plugins/related-post/' );
-		define('related_post_pro_url', '' );
-		define('related_post_demo_url', '' );
-		define('related_post_conatct_url', 'http://pickplugins.com/contact' );
 		define('related_post_qa_url', 'http://pickplugins.com/questions' );
 		define('related_post_plugin_name', 'Related Post' );
-		define('related_post_share_url', 'http://wordpress.org/plugins/related-post/' );
-		define('related_post_textdomain', 'related-post' );
 
 		require_once( plugin_dir_path( __FILE__ ) . 'includes/class-settings.php');
 		require_once( plugin_dir_path( __FILE__ ) . 'includes/class-functions.php');
@@ -159,7 +154,7 @@ class RelatedPost{
 	
 	
 	public function load_textdomain() {
-	  load_plugin_textdomain( related_post_textdomain, false, plugin_basename( dirname( __FILE__ ) ) . '/languages/' ); 
+	  load_plugin_textdomain( 'related-post', false, plugin_basename( dirname( __FILE__ ) ) . '/languages/' );
 	}
 	
 	
